@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" href="index.css"/>
+	<title>Flattener</title>
+</head>
+
+<body>
+	<article>
+		<div>
+			<button onclick="flatten()" class="btn btn-sm btn-primary">Flatten</button>
+		</div>
+
+		<textarea id="code" readonly></textarea>
+	</article>
+
+	<script src="https://unpkg.com/remix-plugin"></script>
+	<script src="tsort.js"></script>
+	<script src="path.js"></script>
+	<script src="index.js"></script>
+</body>
+
+</html>
