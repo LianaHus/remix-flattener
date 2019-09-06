@@ -3,21 +3,21 @@ const client = createIframeClient();
 
 const IMPORT_SOLIDITY_REGEX = /^\s*import(\s+).*$/gm;
 
-let latestCompilationResult;
+let compilationResult;
 
 async function init() {
 	await client.onload();
 	client.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
 		_updateButton(file);
-		latestCompilationResult = { data, source };
+		compilationResult = { data, source };
 	});
 }
 
 async function flatten() {
-	if (!latestCompilationResult) throw new Error('no compilation result available');
-	const target = latestCompilationResult.source.target;
-	const ast = latestCompilationResult.data.sources;
-	const sources = latestCompilationResult.source.sources;
+	if (!compilationResult) throw new Error('no compilation result available');
+	const target = compilationResult.source.target;
+	const ast = compilationResult.data.sources;
+	const sources = compilationResult.source.sources;
 	const dependencyGraph = _getDependencyGraph(ast, target);
 	const sortedFiles = dependencyGraph.isEmpty()
 		? [ target ]
