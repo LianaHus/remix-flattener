@@ -10,6 +10,7 @@ async function init() {
 	client.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
 		fileName = file
 		latestCompilationResult = { data, source }
+		console.log('compilationFinished', fileName, latestCompilationResult);
 	});
 }
 
