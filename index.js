@@ -1,6 +1,5 @@
 const { createIframeClient } = remixPlugin;
-const devMode = { port: 8080 };
-const client = createIframeClient({ devMode });
+const client = createIframeClient();
 
 const IMPORT_SOLIDITY_REGEX = /^\s*import(\s+).*$/gm;
 
