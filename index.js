@@ -4,6 +4,15 @@ const client = createIframeClient({ devMode });
 
 const IMPORT_SOLIDITY_REGEX = /^\s*import(\s+).*$/gm;
 
+async function init() {
+	await client.onload();
+	console.log(client);
+	client.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
+		fileName = file
+		latestCompilationResult = { data, source }
+	});
+}
+
 async function flatten() {
 	await client.onload();
 	const compilationResult = await client.call('solidity', 'getCompilationResult');
@@ -69,3 +78,5 @@ function _getDependencies(ast) {
 		.map(node => node.file);
 	return dependencies;
 }
+
+init();
