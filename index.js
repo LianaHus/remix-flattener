@@ -3,13 +3,14 @@ const client = createIframeClient();
 
 const IMPORT_SOLIDITY_REGEX = /^\s*import(\s+).*$/gm;
 
+let fileName;
+let latestCompilationResult;
+
 async function init() {
 	await client.onload();
-	console.log(client);
 	client.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
-		fileName = file
-		latestCompilationResult = { data, source }
-		console.log('compilationFinished', fileName, latestCompilationResult);
+		fileName = file;
+		latestCompilationResult = { data, source };
 	});
 }
 
