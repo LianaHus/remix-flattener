@@ -3,13 +3,12 @@ const client = createIframeClient();
 
 const IMPORT_SOLIDITY_REGEX = /^\s*import(\s+).*$/gm;
 
-let fileName;
 let latestCompilationResult;
 
 async function init() {
 	await client.onload();
 	client.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
-		fileName = file;
+		_updateButton(file);
 		latestCompilationResult = { data, source };
 	});
 }
@@ -26,6 +25,13 @@ async function flatten() {
 	const uniqueFiles = _unique(sortedFiles);
 	const flattenedSources = _concatSourceFiles(sortedFiles, sources);
 	_updateInput(flattenedSources);
+}
+
+function _updateButton(filePath) {
+	const button = document.getElementById('action');
+	const filePathTokens = filePath.split('/');
+	const fileName = filePathTokens[filePathTokens.length - 1];
+	button.innerText = `Flatten ${fileName}`;
 }
 
 function _getDependencyGraph(ast, target) {
