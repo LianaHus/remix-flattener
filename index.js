@@ -31,6 +31,8 @@ function _updateButton(filePath) {
 	const button = document.getElementById('action');
 	const filePathTokens = filePath.split('/');
 	const fileName = filePathTokens[filePathTokens.length - 1];
+	button.disabled = false;
+	button.title = '';
 	button.innerText = `Flatten ${fileName}`;
 }
 
