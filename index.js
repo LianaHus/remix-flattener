@@ -15,12 +15,10 @@ async function init() {
 }
 
 async function flatten() {
-	await client.onload();
-	const compilationResult = await client.call('solidity', 'getCompilationResult');
-	if (!compilationResult) throw new Error('no compilation result available');
-	const target = compilationResult.source.target;
-	const ast = compilationResult.data.sources;
-	const sources = compilationResult.source.sources;
+	if (!latestCompilationResult) throw new Error('no compilation result available');
+	const target = latestCompilationResult.source.target;
+	const ast = latestCompilationResult.data.sources;
+	const sources = latestCompilationResult.source.sources;
 	const dependencyGraph = _getDependencyGraph(ast, target);
 	const sortedFiles = dependencyGraph.isEmpty()
 		? [ target ]
