@@ -24,6 +24,7 @@ async function flatten() {
 		: dependencyGraph.sort().reverse();
 	const uniqueFiles = _unique(sortedFiles);
 	const flattenedSources = _concatSourceFiles(sortedFiles, sources);
+	_showAlert();
 	_updateInput(flattenedSources);
 	_saveFile(target, flattenedSources);
 }
@@ -59,6 +60,18 @@ function _concatSourceFiles(files, sources) {
 		concat += '\n\n';
 	}
 	return concat;
+}
+
+function _showAlert() {
+	const alertContainer = document.getElementById('alerts');
+	const alert = document.createElement('div');
+	alert.innerText = 'Contract flattened';
+	alert.classList.add('alert');
+	alert.classList.add('alert-success');
+	alertContainer.appendChild(alert);
+	setTimeout(() => {
+		alertContainer.removeChild(alert);
+	}, 5000);
 }
 
 function _updateInput(text) {
