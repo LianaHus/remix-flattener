@@ -25,6 +25,7 @@ async function flatten() {
 	const uniqueFiles = _unique(sortedFiles);
 	const flattenedSources = _concatSourceFiles(sortedFiles, sources);
 	_updateInput(flattenedSources);
+	_saveFile(target, flattenedSources);
 }
 
 function _updateButton(filePath) {
@@ -63,6 +64,15 @@ function _concatSourceFiles(files, sources) {
 function _updateInput(text) {
 	const input = document.getElementById('code');
 	input.value = text;
+}
+
+async function _saveFile(filePath, text) {
+	const filePathTokens = filePath.split('/');
+	const fileNameWithExtension = filePathTokens[filePathTokens.length - 1];
+	const fileNameTokens = fileNameWithExtension.split('.');
+	const fileName = fileNameTokens[0];
+	const flattenedFilePath = `browser/${fileName}_flat.sol`;
+	await client.fileManager.setFile(flattenedFilePath, text);
 }
 
 function _traverse(graph, visited, ast, name) {
