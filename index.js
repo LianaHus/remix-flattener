@@ -28,7 +28,6 @@ async function flatten() {
 	client.emit('statusChanged', { key: 'succeed', type: 'success', title: 'Contract flattened' })
 	_showAlert();
 	navigator.clipboard.writeText(flattenedSources);
-	_updateInput(flattenedSources);
 	_saveFile(target, flattenedSources);
 }
 
@@ -76,12 +75,6 @@ function _showAlert() {
 		alertContainer.removeChild(alert);
 	}, 5000);
 }
-
-function _updateInput(text) {
-	const input = document.getElementById('code');
-	input.value = text;
-}
-
 async function _saveFile(filePath, text) {
 	const filePathTokens = filePath.split('/');
 	const fileNameWithExtension = filePathTokens[filePathTokens.length - 1];
