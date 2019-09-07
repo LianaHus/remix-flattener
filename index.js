@@ -31,14 +31,16 @@ async function flatten() {
 	flattenedSources = _concatSourceFiles(sortedFiles, sources);
 	// Update UI
 	client.emit('statusChanged', { key: 'succeed', type: 'success', title: 'Contract flattened' })
-	_showAlert();
+	_showAlert('Flattened contract copied to clipboard');
 	_updateSaveButton(target);
 	// Save to clipboard
 	navigator.clipboard.writeText(flattenedSources);
 }
 
 async function save() {
-	_saveFile(filePath, flattenedSources);
+	await _saveFile(filePath, flattenedSources);
+	client.emit('statusChanged', { key: 'succeed', type: 'success', title: 'File saved' })
+	_showAlert('File saved');
 }
 
 function _updateFlattenButton(filePath) {
@@ -74,10 +76,10 @@ function _concatSourceFiles(files, sources) {
 	return concat;
 }
 
-function _showAlert() {
+function _showAlert(message) {
 	const alertContainer = document.getElementById('alerts');
 	const alert = document.createElement('div');
-	alert.innerText = 'Contract flattened';
+	alert.innerText = message;
 	alert.classList.add('alert');
 	alert.classList.add('alert-success');
 	alertContainer.appendChild(alert);
