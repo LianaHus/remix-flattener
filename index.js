@@ -27,6 +27,7 @@ async function flatten() {
 	const flattenedSources = _concatSourceFiles(sortedFiles, sources);
 	client.emit('statusChanged', { key: 'succeed', type: 'success', title: 'Contract flattened' })
 	_showAlert();
+	navigator.clipboard.writeText(flattenedSources);
 	_updateInput(flattenedSources);
 	_saveFile(target, flattenedSources);
 }
