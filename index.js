@@ -3,13 +3,16 @@ const client = createIframeClient();
 
 const IMPORT_SOLIDITY_REGEX = /^\s*import(\s+).*$/gm;
 
+let filePath;
 let compilationResult;
+let flattenedSources;
 
 async function init() {
 	await client.onload();
 	client.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
 		client.emit('statusChanged', { key: 'none' })
-		_updateButton(file);
+		_updateFlattenButton(file);
+		filePath = file;
 		compilationResult = { data, source };
 	});
 }
@@ -25,17 +28,20 @@ async function flatten() {
 		? [ target ]
 		: dependencyGraph.sort().reverse();
 	const uniqueFiles = _unique(sortedFiles);
-	const flattenedSources = _concatSourceFiles(sortedFiles, sources);
+	flattenedSources = _concatSourceFiles(sortedFiles, sources);
 	// Update UI
 	client.emit('statusChanged', { key: 'succeed', type: 'success', title: 'Contract flattened' })
 	_showAlert();
+	_updateSaveButton(target);
 	// Save to clipboard
 	navigator.clipboard.writeText(flattenedSources);
-	// Save to file
-	_saveFile(target, flattenedSources);
 }
 
-function _updateButton(filePath) {
+async function save() {
+	_saveFile(filePath, flattenedSources);
+}
+
+function _updateFlattenButton(filePath) {
 	const button = document.getElementById('action');
 	const filePathTokens = filePath.split('/');
 	const fileName = filePathTokens[filePathTokens.length - 1];
@@ -79,6 +85,19 @@ function _showAlert() {
 		alertContainer.removeChild(alert);
 	}, 5000);
 }
+
+function _updateSaveButton(filePath) {
+	const button = document.getElementById('save');
+	const filePathTokens = filePath.split('/');
+	const fileNameWithExtension = filePathTokens[filePathTokens.length - 1];
+	const fileNameTokens = fileNameWithExtension.split('.');
+	const fileName = fileNameTokens[0];
+	const flattenedFilePath = `${fileName}_flat.sol`;
+	button.disabled = false;
+	button.title = '';
+	button.innerText = `Save as ${flattenedFilePath}`;
+}
+
 async function _saveFile(filePath, text) {
 	const filePathTokens = filePath.split('/');
 	const fileNameWithExtension = filePathTokens[filePathTokens.length - 1];

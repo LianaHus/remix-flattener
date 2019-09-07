@@ -18,9 +18,13 @@
 			Flattened source code will be copied to the clipboard.
 		</p>
 
-		<div>
-			<button id="action" onclick="flatten()" class="btn btn-primary btn-block" title="Compile contract first" disabled>Flatten &lt;no file compiled&gt;</button>
-		</div>
+		<button id="action" onclick="flatten()" class="btn btn-primary btn-block" title="Compile contract first" disabled>Flatten &lt;no file compiled&gt;</button>
+
+		<p>
+			You can save the flattened version to the file inside Remix.
+		</p>
+
+		<button id="save" onclick="save()" class="btn btn-secondary btn-block" title="Flatten contract first" disabled>Save &lt;no file flattened&gt;</button>
 
 		<div id="alerts" class="p-2"></div>
 	</article>
