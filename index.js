@@ -15,18 +15,23 @@ async function init() {
 }
 
 async function flatten() {
+	// Get input
 	const target = compilationResult.source.target;
 	const ast = compilationResult.data.sources;
 	const sources = compilationResult.source.sources;
+	// Process
 	const dependencyGraph = _getDependencyGraph(ast, target);
 	const sortedFiles = dependencyGraph.isEmpty()
 		? [ target ]
 		: dependencyGraph.sort().reverse();
 	const uniqueFiles = _unique(sortedFiles);
 	const flattenedSources = _concatSourceFiles(sortedFiles, sources);
+	// Update UI
 	client.emit('statusChanged', { key: 'succeed', type: 'success', title: 'Contract flattened' })
 	_showAlert();
+	// Save to clipboard
 	navigator.clipboard.writeText(flattenedSources);
+	// Save to file
 	_saveFile(target, flattenedSources);
 }
 
