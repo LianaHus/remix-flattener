@@ -8,6 +8,7 @@ let compilationResult;
 async function init() {
 	await client.onload();
 	client.on('solidity', 'compilationFinished', (file, source, languageVersion, data) => {
+		client.emit('statusChanged', { key: 'none' })
 		_updateButton(file);
 		compilationResult = { data, source };
 	});
@@ -24,6 +25,7 @@ async function flatten() {
 		: dependencyGraph.sort().reverse();
 	const uniqueFiles = _unique(sortedFiles);
 	const flattenedSources = _concatSourceFiles(sortedFiles, sources);
+	client.emit('statusChanged', { key: 'succeed', type: 'success', title: 'Contract flattened' })
 	_showAlert();
 	_updateInput(flattenedSources);
 	_saveFile(target, flattenedSources);
