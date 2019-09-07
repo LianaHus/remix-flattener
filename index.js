@@ -69,9 +69,8 @@ function _concatSourceFiles(files, sources) {
 	for (const file of files) {
 		const source = sources[file].content;
 		const sourceWithoutImport = source.replace(IMPORT_SOLIDITY_REGEX, '');
-		concat += `// File: ${file}\n\n`;
+		concat += `\n// File: ${file}\n\n`;
 		concat += sourceWithoutImport;
-		concat += '\n\n';
 	}
 	return concat;
 }
