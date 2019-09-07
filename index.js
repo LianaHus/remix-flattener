@@ -15,7 +15,6 @@ async function init() {
 }
 
 async function flatten() {
-	if (!compilationResult) throw new Error('no compilation result available');
 	const target = compilationResult.source.target;
 	const ast = compilationResult.data.sources;
 	const sources = compilationResult.source.sources;
