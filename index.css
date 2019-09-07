@@ -2,10 +2,11 @@ article {
 	padding: 8px;
 }
 
-#code {
-	width: 100%;
-	height: 70vh;
+#alerts {
 	margin-top: 16px;
-	font-size: 12px;
-	font-family: monospace;
+}
+
+.alert {
+	cursor: pointer;
+	white-space: initial;
 }
