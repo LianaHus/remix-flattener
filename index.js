@@ -1,5 +1,6 @@
-const { createIframeClient } = remixPlugin;
-const client = createIframeClient();
+const { connectIframe, PluginClient } = remixPlugin;
+
+let client;
 
 const IMPORT_SOLIDITY_REGEX = /^\s*import(\s+).*$/gm;
 
@@ -17,30 +18,47 @@ async function init() {
 	});
 }
 
-async function flatten() {
-	// Get input
-	const target = compilationResult.source.target;
-	const ast = compilationResult.data.sources;
-	const sources = compilationResult.source.sources;
-	// Process
-	const dependencyGraph = _getDependencyGraph(ast, target);
-	const sortedFiles = dependencyGraph.isEmpty()
-		? [ target ]
-		: dependencyGraph.sort().reverse();
-	const uniqueFiles = _unique(sortedFiles);
-	flattenedSources = _concatSourceFiles(sortedFiles, sources);
-	// Update UI
-	client.emit('statusChanged', { key: 'succeed', type: 'success', title: 'Contract flattened' })
-	_showAlert('Flattened contract copied to clipboard');
-	_updateSaveButton(target);
-	// Save to clipboard
-	navigator.clipboard.writeText(flattenedSources);
+class CodeExecutor extends PluginClient {
+	flatten (res) {
+		// Get input
+		if (res) {
+			compilationResult = res;
+		}
+		const target = compilationResult.source.target;
+		const ast = compilationResult.data.sources;
+		const sources = compilationResult.source.sources;
+		// Process
+		const dependencyGraph = _getDependencyGraph(ast, target);
+		const sortedFiles = dependencyGraph.isEmpty()
+			? [ target ]
+			: dependencyGraph.sort().reverse();
+		const uniqueFiles = _unique(sortedFiles);
+		flattenedSources = _concatSourceFiles(sortedFiles, sources);
+		// Update UI
+		client.emit('statusChanged', { key: 'succeed', type: 'success', title: 'Contract flattened' })
+		_showAlert('Flattened contract copied to clipboard');
+		_updateSaveButton(target);
+		// Save to clipboard
+		navigator.clipboard.writeText(flattenedSources);
+	}
+
+	flattenAndSave (res) {
+		this.flatten(res);
+		return save();
+	}
+
 }
 
+
+client = new CodeExecutor();
+connectIframe(client);
+init ();
+
 async function save() {
-	await _saveFile(filePath, flattenedSources);
-	client.emit('statusChanged', { key: 'succeed', type: 'success', title: 'File saved' })
+	const path = await _saveFile(filePath, flattenedSources);
+	client.emit('statusChanged', { key: 'succeed', type: 'success', title: 'File saved' });
 	_showAlert('File saved');
+	return path;
 }
 
 function _updateFlattenButton(filePath) {
@@ -105,7 +123,8 @@ async function _saveFile(filePath, text) {
 	const fileNameTokens = fileNameWithExtension.split('.');
 	const fileName = fileNameTokens[0];
 	const flattenedFilePath = `browser/${fileName}_flat.sol`;
-	await client.fileManager.setFile(flattenedFilePath, text);
+	await client.call('fileManager', 'writeFile', flattenedFilePath, text);
+	return flattenedFilePath;
 }
 
 function _traverse(graph, visited, ast, name) {
@@ -128,5 +147,3 @@ function _getDependencies(ast) {
 		.map(node => node.file);
 	return dependencies;
 }
-
-init();
